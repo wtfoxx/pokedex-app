@@ -1,4 +1,4 @@
-pokemonList = [{
+let pokemonList = [{
   name: 'Bulbasaur',
   height: 0.7,
   weight: 6.9,
@@ -33,3 +33,11 @@ pokemonList = [{
   type: ['normal']
 }
 ]
+
+for (let i = 0; i < pokemonList.length; i++) {
+  if (pokemonList[i].height >= 0.7) {
+    document.write('This is ' + pokemonList[i].name + '! It is ' + pokemonList[i].height + ' meters tall, and weights ' + pokemonList[i].height + 'kg. <b>Wow! That\'s big!</b> <br>')
+  } else {
+  document.write('This is ' + pokemonList[i].name + '! It is ' + pokemonList[i].height + ' meters tall, and weights ' + pokemonList[i].height + 'kg.<br>');
+  }
+}
