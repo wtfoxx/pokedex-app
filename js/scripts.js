@@ -1,40 +1,8 @@
 //pokemonRepository is a IIFE function wrapping the pokemonList information so that the list variables are not accessed globally
 let pokemonRepository = (function () {
 
-    let pokemonList = [{
-    name: 'Bulbasaur',
-    height: 0.7,
-    weight: 6.9,
-    type: ['grass', 'poison']
-  },
-
-  {
-    name: 'Charmander',
-    height: 0.6,
-    weight: 8.5,
-    type: ['fire']
-  },
-
-  {
-    name: 'Squirtle',
-    height: 0.5,
-    weight: 9.0,
-    type: ['water']
-  },
-
-  { 
-    name: 'Pikachu',
-    height: 0.4,
-    weight: 6.0,
-    type: ['electric']
-  },
-
-  { 
-    name: 'Ditto',
-    height: 0.3,
-    weight: 4.0,
-    type: ['normal']
-  }];
+  let pokemonList = [];
+  let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
   //This function adds the pokemon to the pokemonList. You have to make it an object with assigned keys for it to work. 
   //It'll log a response to whether it worked or not in the console.
@@ -42,9 +10,7 @@ let pokemonRepository = (function () {
     if (
     typeof(pokemon) === 'object' &&
     'name' in pokemon &&
-    'height' in pokemon &&
-    'weight' in pokemon &&
-    'type' in pokemon
+    'detailsUrl' in pokemon
     ) {
     pokemonList.push(pokemon);
     console.log(pokemon.name + ' was added to the Pokédex successfully!')
@@ -60,7 +26,9 @@ let pokemonRepository = (function () {
 
 //This function will log the name of the pokemon in the console. It's attached to another function down there.
   function showDetails(pokemon) {
-    console.log(pokemon.name);
+    loadDetails(pokemon).then(function () {
+      console.log(pokemon);
+   });
   }
 
   //Creates list items that are buttons inside a list for every existing and newly added pokemon.
@@ -78,22 +46,53 @@ let pokemonRepository = (function () {
     });
   };
 
+  function loadDetails(item) {
+    let url = item.detailsUrl;
+    return fetch(url).then(function (response) {
+      return response.json();
+    }).then(function (details) {
+      // Now we add the details to the item
+      item.imageUrl = details.sprites.front_default;
+      item.height = details.height;
+      item.types = details.types;
+    }).catch(function (e) {
+      console.error(e);
+    });
+  }
 
-//This is VERY important, so that you can access functions you created in this IIFE everywhere in the code.
+  function loadList() {
+    return fetch(apiUrl).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      json.results.forEach(function (item) {
+        let pokemon = {
+          name: item.name,
+          detailsUrl: item.url
+        };
+        add(pokemon);
+      });
+    }).catch(function (e) {
+      console.error(e);
+    })
+  }
+
+  //This is VERY important, so that you can access functions you created in this IIFE everywhere in the code.
   return {
     getAll: getAll,
     add: add,
     addListItem: addListItem,
-    showDetails: showDetails
+    showDetails: showDetails,
+    loadList: loadList,
+    loadDetails: loadDetails
   };
-
 
 })();
 
-pokemonRepository.add({name: 'Charmander', height: 0.6, weight: 8.5, type: ['fire']});  
-
 console.log(pokemonRepository.getAll());
 
-pokemonRepository.getAll().forEach(function(pokemon) {
-  pokemonRepository.addListItem(pokemon);
+pokemonRepository.loadList().then(function() {
+  // Now the data is loaded!
+  pokemonRepository.getAll().forEach(function(pokemon){
+    pokemonRepository.addListItem(pokemon);
+  });
 });
