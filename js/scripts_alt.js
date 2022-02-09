@@ -27,7 +27,7 @@ let pokemonRepository = (function () {
 //This function will log the name of the pokemon in the console. It's attached to another function down there.
   function showDetails(pokemon) {
     loadDetails(pokemon).then(function () {
-      showModal(pokemon);
+      console.log(pokemon);
    });
   }
 
@@ -38,7 +38,7 @@ let pokemonRepository = (function () {
     let button = document.createElement('button');
     let pokeSprite = document.createElement('div');
     pokeSprite.classList.add('pokemon-sprite');
-    pokeSprite.style.backgroundImage = 
+    pokeSprite.style.backgroundImage = 'url(' + pokemon.imageUrl + ')';
     button.innerText = pokemon.name;
     button.classList.add('pokemon-button');
     listItem.appendChild(button);
@@ -50,94 +50,43 @@ let pokemonRepository = (function () {
     });
   };
 
-  function loadDetails(item) {
+  async function loadDetails(item) {
     let url = item.detailsUrl;
-    return fetch(url).then(function (response) {
+    await fetch(url).then(function (response) {
       return response.json();
     }).then(function (details) {
       // Now we add the details to the item
-      item.imageUrl = details.sprites.front_default;
+      item['imageUrl'] = details.sprites.front_default;
       item.height = details.height;
       item.types = details.types;
-      item.weight = details.weight;
     }).catch(function (e) {
       console.error(e);
     });
+
+    return item
   }
 
-  function loadList() {
-    return fetch(apiUrl).then(function (response) {
-      return response.json();
-    }).then(function (json) {
-      json.results.forEach(function (item) {
-        let pokemon = {
-          name: item.name,
-          detailsUrl: item.url
-        };
-        add(pokemon);
-      });
-    }).catch(function (e) {
-      console.error(e);
-    })
+  async function loadList() {
+    const list = []        
+
+    const { results } = await fetch(apiUrl)
+      .then(res => res.json())
+      .catch(console.error)
+
+    for (const item of results) {
+      const pokemon = await loadDetails({
+        name: item.name,
+        detailsUrl: item.url,
+        imageUrl: null,
+        height: null,
+        types: null
+      })
+
+      add(pokemon);
+    }
+
+    return list
   }
-
-  function showModal(pokemon) {
-    let modalOverlay = document.querySelector('.modal__overlay');
-    modalOverlay.innerHTML = '';
-
-    let modalContainer = document.createElement('div');
-    modalContainer.classList.add('modal__container');
-
-    let modalHeader = document.createElement('header');
-    modalHeader.classList.add('modal__header');
-
-    let modalClose = document.createElement('button');
-    modalClose.classList.add('modal__close');
-    modalClose.addEventListener('click', hideModal);
-
-    let pokemonSprite = document.createElement('img');
-    pokemonSprite.classList.add('pokemon-sprite');
-    pokemonSprite.src = pokemon.imageUrl;
-
-    let modalTitle = document.createElement('h2');
-    modalTitle.classList.add('modal__title');
-    modalTitle.innerText = pokemon.name;
-
-    let modalContent = document.createElement('p');
-    modalContent.classList.add('modal__content');
-    modalContent.innerHTML = 
-    '<b>Height: </b>' + pokemon.height + 
-    '<br><b>Weight: </b>' + pokemon.weight +
-    '<br><b>Types: </b>' + pokemon.types;
-
-    modalOverlay.appendChild(modalContainer);
-    modalContainer.appendChild(modalHeader);
-    modalContainer.appendChild(modalContent);
-    modalHeader.appendChild(modalClose);
-    modalHeader.appendChild(pokemonSprite);
-    modalHeader.appendChild(modalTitle);
-
-    modalOverlay.classList.add('is-open');
-
-  function hideModal() {
-    modalOverlay.classList.remove('is-open');
-  };
-
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalOverlay.classList.contains('is-open')) {
-      hideModal();
-    }
-  });
-
-  modalOverlay.addEventListener('click', (e) => {
-    let target = e.target;
-    if (target === modalOverlay) {
-      hideModal();
-    }
-  });
-
-}
-  
 
   //This is VERY important, so that you can access functions you created in this IIFE everywhere in the code.
   return {
