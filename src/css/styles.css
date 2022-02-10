@@ -1,0 +1,16 @@
+body {
+  background-color: #222222;
+}
+
+.pokemon-list-item {
+  position: relative;
+  display: inline-block;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: -1px;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,.125);
+  color: #495057;
+  text-align: center;
+  cursor: pointer;
+  width: 150px;
+}

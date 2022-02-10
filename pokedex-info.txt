@@ -1,0 +1,6 @@
+Pokedex app
+
+My role was creating an app that would fetch an external API and display the data in detail. Later implementing Bootstrap for visuals.
+The tasks I faced were making sure all functions, synchronous and asynchronous worked flawlessly and rendered the desired output. I also wanted to create a filter to help the user find what they are looking for with ease.
+If I could, I would've done this in a different order, starting with the visual first and then creating the code around it. As fetching the data is not a difficult task, some elements I wanted to implement visually, meant I had to refactor some parts of the code. For example: I wanted all pokemons to be their own card with images right when you load the page, and when you click on them, the modal would show up the information. Unfortunately, the information, and consequently the image urls, was only being loaded when you clicked the specific pokemon, which meant I would have to pull this information before I even clicked on a pokemon, resulting in a much slower performance. I did test it, and it did work, but it took too long to load.
+I learned a LOT about JavaScript, DOM interaction, Bootstrap and API fetching with JSON.

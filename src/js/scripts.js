@@ -36,12 +36,23 @@ let pokemonRepository = (function () {
     let list = document.querySelector('.list-group');
     let button = document.createElement('button');
     let pokeSprite = document.createElement('div');
-    button.classList.add('list-group-item', 'list-group-item-action', 'search-button');
+    button.classList.add('pokemon-list-item', 'search-button');
     button.setAttribute('data-toggle', 'modal');
     button.setAttribute('data-target', '#pokemonModal');
     button.innerText = pokemon.name[0].toUpperCase() + pokemon.name.substring(1);
     list.appendChild(button);
     button.appendChild(pokeSprite);
+
+    //Calling this function again so that it can load the image to add to the pokemon buttons.
+    loadDetails(pokemon).then(function () {
+      let pokemonImage = document.createElement('img');
+      pokemonImage.src = pokemon.imageUrl;
+      pokemonImage.classList.add('pokemon-image');
+
+      button.appendChild(pokemonImage);
+      })
+
+
 
     //This button event listener will log back the pokemon's name you clicked on the console
     button.addEventListener('click', function() {
@@ -88,7 +99,7 @@ let pokemonRepository = (function () {
     
   }
 
-  //Creates the modal and it's interactivity
+  //Creates the modal and its interactivity
   function showModal(pokemon) {
     let modalTitle = $('.modal-title');
     let modalBody = $('.modal-body');
@@ -109,6 +120,8 @@ let pokemonRepository = (function () {
     modalBody.append(typesElement);
 }
   
+
+//Search bar functionality
 $(document).ready(function(){
   $('#pokemon-search').on('keyup', function() {
       let value = $(this).val().toLowerCase();
@@ -138,19 +151,5 @@ pokemonRepository.loadList().then(function() {
     pokemonRepository.addListItem(pokemon)
     });
   });
-
-let count = (function count() {
-  
-  let pokemonCounter = $('.list-group-item');
-  let counter = $('.nav-link');
-  counter.empty();
-
-  let counterElement = $(pokemonCounter.length);
-
-  counter.append(counterElement);
-
-  console.log(pokemonCounter.length);
-})();
-
 
 
