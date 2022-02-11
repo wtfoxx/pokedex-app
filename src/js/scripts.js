@@ -45,12 +45,16 @@ let pokemonRepository = (function () {
 
     //Calling this function again so that it can load the image to add to the pokemon buttons.
     loadDetails(pokemon).then(function () {
+      if (pokemon.imageUrl != null) {
       let pokemonImage = document.createElement('img');
       pokemonImage.src = pokemon.imageUrl;
       pokemonImage.classList.add('pokemon-image');
 
       button.appendChild(pokemonImage);
-      })
+      } else {
+        console.log('pokemon image not found')
+      }
+    });
 
 
 
